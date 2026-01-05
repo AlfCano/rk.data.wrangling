@@ -1,0 +1,227 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rk.data.wrangling 0.1.0\n"
+"Report-Msgid-Bugs-To: https://mail.kde.org/mailman/listinfo/kde-i18n-doc\n"
+"POT-Creation-Date: 2026-01-05 12:00+0000\n"
+"PO-Revision-Date: 2026-01-05 12:00+0000\n"
+"Last-Translator: Your Name <your.email@example.com>\n"
+"Language-Team: French <kde-francophone@kde.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+msgid "A suite of plugins for modern data manipulation using 'dplyr'. Includes batch transformations, recoding multiple variables, and creating composite scores."
+msgstr "Une suite de plugins pour la manipulation moderne des données avec 'dplyr'. Inclut les transformations par lots, le recodage de multiples variables et la création de scores composites."
+
+msgid "Batch Transform Variables"
+msgstr "Transformer des variables par lots"
+
+msgid "Variable Selection"
+msgstr "Sélection des variables"
+
+msgid "Variables to transform"
+msgstr "Variables à transformer"
+
+msgid "Grouping variable(s) (Optional)"
+msgstr "Variable(s) de regroupement (Optionnel)"
+
+msgid "Grouped Calculation"
+msgstr "Calcul groupé"
+
+msgid "Transformation"
+msgstr "Transformation"
+
+msgid "Function"
+msgstr "Fonction"
+
+msgid "Logarithm (log)"
+msgstr "Logarithme (log)"
+
+msgid "Log10 (log10)"
+msgstr "Log10 (log10)"
+
+msgid "Exponential (exp)"
+msgstr "Exponentiel (exp)"
+
+msgid "Square Root (sqrt)"
+msgstr "Racine carrée (sqrt)"
+
+msgid "Abs (abs)"
+msgstr "Absolu (abs)"
+
+msgid "Standardize (scale)"
+msgstr "Standardiser (scale)"
+
+msgid "Mean (mean)"
+msgstr "Moyenne (mean)"
+
+msgid "Median (median)"
+msgstr "Médiane (median)"
+
+msgid "Sum (sum)"
+msgstr "Somme (sum)"
+
+msgid "Standard Deviation (sd)"
+msgstr "Écart-type (sd)"
+
+msgid "Variance (var)"
+msgstr "Variance (var)"
+
+msgid "Min (min)"
+msgstr "Min (min)"
+
+msgid "Max (max)"
+msgstr "Max (max)"
+
+msgid "Convert to Numeric"
+msgstr "Convertir en numérique"
+
+msgid "Convert to Factor"
+msgstr "Convertir en facteur"
+
+msgid "Custom..."
+msgstr "Personnalisé..."
+
+msgid "Ignore NAs (na.rm = TRUE)"
+msgstr "Ignorer les NA (na.rm = TRUE)"
+
+msgid "Custom function (e.g., function(x) x^2)"
+msgstr "Fonction personnalisée (ex : function(x) x^2)"
+
+msgid "Output Options"
+msgstr "Options de sortie"
+
+msgid "Naming pattern (glue syntax)"
+msgstr "Modèle de nommage (syntaxe glue)"
+
+msgid "Use <b>{.col}</b> for original name and <b>{.fn}</b> for function name.<br>Leave empty to overwrite original variables."
+msgstr "Utilisez <b>{.col}</b> pour le nom original et <b>{.fn}</b> pour le nom de la fonction.<br>Laissez vide pour écraser les variables originales."
+
+msgid "Append to original dataset (mutate)"
+msgstr "Ajouter au jeu de données original (mutate)"
+
+msgid "Preview data"
+msgstr "Aperçu des données"
+
+msgid "<i>Note: Preview limited to the first selected variable and 50 rows.<br><b>Warning:</b> Aggregation functions (sum, mean) in preview will only reflect the 50 sampled rows, not the full dataset.</i>"
+msgstr "<i>Note : Aperçu limité à la première variable sélectionnée et 50 lignes.<br><b>Attention :</b> Les fonctions d'agrégation (somme, moyenne) dans l'aperçu ne refléteront que les 50 lignes échantillonnées, pas le jeu de données complet.</i>"
+
+msgid "Save to (overwrite or new object)"
+msgstr "Enregistrer dans (écraser ou nouvel objet)"
+
+msgid "Batch Transform Created: "
+msgstr "Transformation par lots créée : "
+
+msgid "Apply a function to multiple variables simultaneously using dplyr::across."
+msgstr "Appliquer une fonction à plusieurs variables simultanément en utilisant dplyr::across."
+
+msgid "Batch Recode Variables"
+msgstr "Recoder des variables par lots"
+
+msgid "Variables to recode"
+msgstr "Variables à recoder"
+
+msgid "Recode Rules"
+msgstr "Règles de recodage"
+
+msgid "Input Data Type (Old Value)"
+msgstr "Type de données d'entrée (Ancienne valeur)"
+
+msgid "Numeric / Integer"
+msgstr "Numérique / Entier"
+
+msgid "Character / Factor"
+msgstr "Caractère / Facteur"
+
+msgid "Mapping Rules"
+msgstr "Règles de mappage"
+
+msgid "Default Behavior"
+msgstr "Comportement par défaut"
+
+msgid "Unmatched values (Else)"
+msgstr "Valeurs non correspondantes (Sinon)"
+
+msgid "Copy original values (Default)"
+msgstr "Copier les valeurs originales (Défaut)"
+
+msgid "Set to NA"
+msgstr "Mettre à NA"
+
+msgid "Specific value..."
+msgstr "Valeur spécifique..."
+
+msgid "Value"
+msgstr "Valeur"
+
+msgid "Output Data Type (New Value)"
+msgstr "Type de données de sortie (Nouvelle valeur)"
+
+msgid "Suffix"
+msgstr "Suffixe"
+
+msgid "Convert output to factor"
+msgstr "Convertir la sortie en facteur"
+
+msgid "<i>Note: Preview limited to the first selected variable and 50 rows.</i>"
+msgstr "<i>Note : Aperçu limité à la première variable sélectionnée et 50 lignes.</i>"
+
+msgid "Save result object"
+msgstr "Enregistrer l'objet résultat"
+
+msgid "Recoded Variables Created in: "
+msgstr "Variables recodées créées dans : "
+
+msgid "Recode multiple variables using a grid of Old/New values."
+msgstr "Recoder plusieurs variables en utilisant une grille de valeurs Ancienne/Nouvelle."
+
+msgid "Create Composite Score"
+msgstr "Créer un score composite"
+
+msgid "Items to aggregate"
+msgstr "Éléments à agréger"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Aggregation Method"
+msgstr "Méthode d'agrégation"
+
+msgid "Mean (Average)"
+msgstr "Moyenne"
+
+msgid "Sum (Total)"
+msgstr "Somme (Total)"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "Maximum"
+msgstr "Maximum"
+
+msgid "Count (N valid)"
+msgstr "Nombre (N valide)"
+
+msgid "Remove NAs (na.rm = TRUE)"
+msgstr "Supprimer les NA (na.rm = TRUE)"
+
+msgid "Name of new variable"
+msgstr "Nom de la nouvelle variable"
+
+msgid "Append to original dataset"
+msgstr "Ajouter au jeu de données original"
+
+msgid "<i>Note: Preview limited to 50 rows.</i>"
+msgstr "<i>Note : Aperçu limité à 50 lignes.</i>"
+
+msgid "Save result as"
+msgstr "Enregistrer le résultat sous"
+
+msgid "Composite Score Created: "
+msgstr "Score composite créé : "
+
+msgid "Calculate row-wise scores (Mean/Sum) from multiple variables."
+msgstr "Calculer des scores par ligne (Moyenne/Somme) à partir de plusieurs variables."

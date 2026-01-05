@@ -1,0 +1,117 @@
+<!DOCTYPE
+	rkpluginmap
+>
+<document
+	base_prefix=""
+	namespace="BatchTransform"
+	id="BatchTransform_rkward"
+	po_id="BatchTransform_rkward"
+	priority="medium"
+>
+	<!--
+		this code was generated using the rkwarddev package.
+	perhaps don't make changes here, but in the rkwarddev script instead!
+	-->
+	<!--
+		<dependencies>
+		</dependencies>
+	-->
+	<about
+		name="rk.data.wrangling"
+		shortinfo="A suite of plugins for modern data manipulation using 'dplyr'. Includes batch transformations, recoding multiple variables, and creating composite scores."
+		longinfo="A suite of plugins for modern data manipulation using 'dplyr'. Includes batch transformations, recoding multiple variables, and creating composite scores."
+		version="0.1.0"
+		releasedate="2026-01-05"
+		url="https://github.com/AlfCano/rk.data.wrangling"
+		license="GPL (&gt;= 3)"
+	>
+		<author
+			given="Alfonso"
+			family="Cano"
+			email="alfonso.cano@correo.buap.mx"
+			role="aut, cre"
+		/>
+	</about>
+	<require
+		map="rkward::menu"
+	/>
+	<require
+		map="rkward::embedded"
+	/>
+	<components>
+		<component
+			id="cmp_BatchTransformBatchRecode"
+			label="Batch Recode"
+			type="standard"
+			file="plugins/BatchRecode.xml"
+		>
+		</component>
+		<component
+			id="cmp_BatchTransformCrtCmpstScr"
+			label="Create Composite Score"
+			type="standard"
+			file="plugins/CreateCompositeScore.xml"
+		>
+		</component>
+		<component
+			id="cmp_BatchTransformBtchTrnsfrm"
+			label="Batch Transform"
+			type="standard"
+			file="plugins/BatchTransform.xml"
+		>
+		</component>
+	</components>
+	<hierarchy>
+		<menu
+			id="data"
+			label="Data"
+		>
+			<menu
+				id="DataWrangling"
+				label="Data Wrangling"
+			>
+				<entry
+					component="cmp_BatchTransformBatchRecode"
+				/>
+			</menu>
+		</menu>
+		<menu
+			id="data"
+			label="Data"
+		>
+			<menu
+				id="DataWrangling"
+				label="Data Wrangling"
+			>
+				<entry
+					component="cmp_BatchTransformCrtCmpstScr"
+				/>
+			</menu>
+		</menu>
+		<menu
+			id="data"
+			label="Data"
+		>
+			<menu
+				id="DataWrangling"
+				label="Data Wrangling"
+			>
+				<entry
+					component="cmp_BatchTransformBtchTrnsfrm"
+				/>
+			</menu>
+		</menu>
+	</hierarchy>
+	<!--
+		<context
+			id="x11"
+		>
+		</context>
+	-->
+	<!--
+		<context
+			id="import"
+		>
+		</context>
+	-->
+</document>

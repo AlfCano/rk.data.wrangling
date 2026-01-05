@@ -1,0 +1,19 @@
+Package: rk.data.wrangling
+Type: Package
+Title: A suite of plugins for modern data manipulation using 'dplyr'.
+        Includes batch transformations, recoding multiple variables,
+        and creating composite scores.
+Version: 0.1.0
+Date: 2026-01-05
+Author: Alfonso Cano
+Maintainer: Alfonso Cano <alfonso.cano@correo.buap.mx>
+Enhances: rkward
+Description: A suite of plugins for modern data manipulation using
+        'dplyr'. Includes batch transformations, recoding multiple
+        variables, and creating composite scores.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyLoad: yes
+URL: https://github.com/AlfCano/rk.data.wrangling
+Authors@R: person(given="Alfonso", family="Cano",
+        email="alfonso.cano@correo.buap.mx", role=c("aut", "cre"))
