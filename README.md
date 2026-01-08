@@ -1,27 +1,19 @@
 # rk.data.wrangling: Tidy Data Manipulation for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.0-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.1-blue.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml)
 
 **rk.data.wrangling** brings modern, "tidy" data manipulation tools to the RKWard GUI. It provides a user-friendly interface for the powerful `dplyr` package, allowing users to perform complex batch operations—transformations, recoding, and scoring—on multiple variables simultaneously without writing complex code.
 
-## 🚀 What's New in Version 0.1.0
+## 🚀 What's New in Version 0.1.1
 
-This is the first major release of the package, introducing three core components designed to cover the most common data preparation tasks in research:
+This release focuses on stability and robustness, addressing key issues found in initial testing:
 
-1.  **Batch Transform:** Apply mathematical functions to many columns at once (with grouping support).
-2.  **Batch Recode:** Map old values to new values across multiple variables using a spreadsheet interface.
-3.  **Composite Score:** Calculate row-wise aggregates (sums, means, reliability scales).
-
-### 🌍 Internationalization
-The interface is fully localized in:
-*   🇺🇸 English (Default)
-*   🇪🇸 Spanish (`es`)
-*   🇫🇷 French (`fr`)
-*   🇩🇪 German (`de`)
-*   🇧🇷 Portuguese (Brazil) (`pt_BR`)
+*   **Robust Variable Handling:** Fixed issues where variables with spaces or special characters (e.g., `Mucha confianza`) caused syntax errors. Variable names are now correctly quoted in generated R code.
+*   **Complex Object Output:** Fixed bugs when saving results to complex object paths (e.g., `my_list[["data"]]`). Quotes in object names are now properly escaped.
+*   **Recode Matrix Improvements:** The spreadsheet interface for recoding now correctly accepts mixed data types (text/numbers) without blocking the "Submit" button or showing validation errors.
 
 ## ✨ Features
 
@@ -45,6 +37,12 @@ The interface is fully localized in:
 ### 🛡️ Universal Features
 *   **Live Preview:** All plugins include a data preview window that shows the result of the operation on the first 50 rows, allowing you to verify logic before processing the full dataset.
 *   **Non-Destructive:** By default, operations create new variables or new objects, preserving your original data unless you explicitly choose to overwrite.
+*   **Internationalization:** Fully localized interface available in:
+    *   🇺🇸 English (Default)
+    *   🇪🇸 Spanish (`es`)
+    *   🇫🇷 French (`fr`)
+    *   🇩🇪 German (`de`)
+    *   🇧🇷 Portuguese (Brazil) (`pt_BR`)
 
 ## 📦 Installation
 

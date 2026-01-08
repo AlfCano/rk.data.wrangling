@@ -34,8 +34,6 @@
 		<caption id="tab_OtptOptn" />
 		<setting id="names_tr">
 		</setting>
-		<setting id="tr_append">
-		</setting>
 		<setting id="save_tr">
 		</setting>
 	</settings>

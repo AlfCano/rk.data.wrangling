@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -47,6 +47,7 @@ function preview(){
       var append = getValue("append_cp");
       var vars_str = "dplyr::pick(c(" + vars.join(", ") + "))";
       var calc_code = "";
+      var save_name = getValue("save_cp");
 
       if (method == "rowMeans") { calc_code = "rowMeans(" + vars_str + ", na.rm = " + na_arg + ")"; }
       else if (method == "rowSums") { calc_code = "rowSums(" + vars_str + ", na.rm = " + na_arg + ")"; }
@@ -56,7 +57,7 @@ function preview(){
       else if (method == "median") { calc_code = "apply(" + vars_str + ", 1, median, na.rm = " + na_arg + ")"; }
       else if (method == "var") { calc_code = "apply(" + vars_str + ", 1, var, na.rm = " + na_arg + ")"; }
       else if (method == "count") { calc_code = "rowSums(!is.na(" + vars_str + "))"; }
-
+      
       
       echo("preview_data <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\n");
       
@@ -79,7 +80,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -118,6 +119,7 @@ function calculate(is_preview){
       var append = getValue("append_cp");
       var vars_str = "dplyr::pick(c(" + vars.join(", ") + "))";
       var calc_code = "";
+      var save_name = getValue("save_cp");
 
       if (method == "rowMeans") { calc_code = "rowMeans(" + vars_str + ", na.rm = " + na_arg + ")"; }
       else if (method == "rowSums") { calc_code = "rowSums(" + vars_str + ", na.rm = " + na_arg + ")"; }
@@ -127,10 +129,13 @@ function calculate(is_preview){
       else if (method == "median") { calc_code = "apply(" + vars_str + ", 1, median, na.rm = " + na_arg + ")"; }
       else if (method == "var") { calc_code = "apply(" + vars_str + ", 1, var, na.rm = " + na_arg + ")"; }
       else if (method == "count") { calc_code = "rowSums(!is.na(" + vars_str + "))"; }
-
       
-      var verb = (append == "1") ? "mutate" : "transmute";
-      echo("data_score <- " + input_df + " %>% dplyr::" + verb + "(" + newname + " = " + calc_code + ")\n");
+      
+      if (append == "1") {
+          echo(save_name + " <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\n");
+      } else {
+          echo(save_name + " <- " + input_df + " %>% dplyr::transmute(" + newname + " = " + calc_code + ")\n");
+      }
       
 }
 
@@ -141,7 +146,12 @@ function printout(is_preview){
 	// printout the results
 	if(!is_preview) {
 		new Header(i18n("Create Composite Score results")).print();	
-	}if(getValue("save_cp.active")) { echo("rk.header(\"Composite Score Created: " + getValue("name_cp") + "\", level=3, toc=FALSE)\n"); }
+	}
+    if(getValue("save_cp.active")) { 
+      var save_name = getValue("save_cp").replace(/"/g, "\\\"");
+      echo("rk.header(\"Composite Score Created: " + getValue("name_cp") + "\", level=3, toc=FALSE)\n"); 
+    }
+  
 	if(!is_preview) {
 		//// save result object
 		// read in saveobject variables

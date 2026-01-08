@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -47,20 +47,30 @@ function preview(){
       var as_fac = getValue("as_factor_rc");
       var else_mode = getValue("rad_else_mode");
       var else_custom = getValue("inp_else_custom");
+      var save_name = getValue("save_rc");
 
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
+      
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); var rhs = String(news[i]).trim();
+          var lhs = String(olds[i]).trim(); 
+          var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          if (in_type == "character") { if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\""; }
-          if (out_type == "character") { if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\""; }
+          
+          if (in_type == "character") {
+             if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
+          }
+          if (out_type == "character") {
+             if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\"";
+          }
           args.push(lhs + " ~ " + rhs);
       }
-      if (else_mode == "copy") {
-          if (in_type == out_type) { args.push(".default = ."); }
-          else {
+
+      if (else_mode == "copy") { 
+          if (in_type == out_type) {
+             args.push(".default = .");
+          } else {
              if (out_type == "character") args.push(".default = as.character(.)");
              else args.push(".default = as.numeric(.)");
           }
@@ -99,7 +109,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -137,20 +147,30 @@ function calculate(is_preview){
       var as_fac = getValue("as_factor_rc");
       var else_mode = getValue("rad_else_mode");
       var else_custom = getValue("inp_else_custom");
+      var save_name = getValue("save_rc");
 
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
+      
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); var rhs = String(news[i]).trim();
+          var lhs = String(olds[i]).trim(); 
+          var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          if (in_type == "character") { if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\""; }
-          if (out_type == "character") { if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\""; }
+          
+          if (in_type == "character") {
+             if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
+          }
+          if (out_type == "character") {
+             if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\"";
+          }
           args.push(lhs + " ~ " + rhs);
       }
-      if (else_mode == "copy") {
-          if (in_type == out_type) { args.push(".default = ."); }
-          else {
+
+      if (else_mode == "copy") { 
+          if (in_type == out_type) {
+             args.push(".default = .");
+          } else {
              if (out_type == "character") args.push(".default = as.character(.)");
              else args.push(".default = as.numeric(.)");
           }
@@ -168,7 +188,7 @@ function calculate(is_preview){
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
       
-      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo(save_name + " <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 
@@ -179,7 +199,12 @@ function printout(is_preview){
 	// printout the results
 	if(!is_preview) {
 		new Header(i18n("Batch Recode results")).print();	
-	}if(getValue("save_rc.active")) { echo("rk.header(\"Recoded Variables Created in: " + getValue("save_rc") + "\", level=3, toc=FALSE)\n"); }
+	}
+    if(getValue("save_rc.active")) { 
+      var save_name = getValue("save_rc").replace(/"/g, "\\\"");
+      echo("rk.header(\"Recoded Variables Created in: " + save_name + "\", level=3, toc=FALSE)\n"); 
+    }
+  
 	if(!is_preview) {
 		//// save result object
 		// read in saveobject variables
