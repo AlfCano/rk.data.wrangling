@@ -1,18 +1,23 @@
 # rk.data.wrangling: Tidy Data Manipulation for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.1-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.2-blue.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml)
 
 **rk.data.wrangling** brings modern, "tidy" data manipulation tools to the RKWard GUI. It provides a user-friendly interface for the powerful `dplyr` package, allowing users to perform complex batch operations—transformations, recoding, and scoring—on multiple variables simultaneously without writing complex code.
 
+## 🚀 What's New in Version 0.1.2
+
+This maintenance release focuses on stability and code generation accuracy:
+
+*   **Composite Score Fix:** Resolved a syntax error in the "Create Composite Score" component that occurred when saving results to complex object paths (e.g., `survey_list[["score"]]`). The generated R code now correctly escapes these names.
+*   **Internal Stability:** Enforced strict separation between internal calculation variables and user-defined output names across all components, preventing potential naming collisions.
+
 ## 🚀 What's New in Version 0.1.1
 
-This release focuses on stability and robustness, addressing key issues found in initial testing:
-
 *   **Robust Variable Handling:** Fixed issues where variables with spaces or special characters (e.g., `Mucha confianza`) caused syntax errors. Variable names are now correctly quoted in generated R code.
-*   **Complex Object Output:** Fixed bugs when saving results to complex object paths (e.g., `my_list[["data"]]`). Quotes in object names are now properly escaped.
+*   **Complex Object Output:** Fixed bugs when saving results to complex object paths. Quotes in object names are now properly escaped.
 *   **Recode Matrix Improvements:** The spreadsheet interface for recoding now correctly accepts mixed data types (text/numbers) without blocking the "Submit" button or showing validation errors.
 
 ## ✨ Features

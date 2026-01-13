@@ -6,7 +6,7 @@ local({
   rkwarddev.required("0.08-1")
 
   plugin_name <- "rk.data.wrangling"
-  plugin_ver <- "0.1.1"
+  plugin_ver <- "0.1.2"
 
   package_about <- rk.XML.about(
     name = plugin_name,
@@ -88,6 +88,7 @@ local({
 
   tr_naming <- rk.XML.input(label = "Naming pattern (glue syntax)", initial = "{.col}_{.fn}", id.name = "names_tr")
   tr_help_label <- rk.XML.text("Use <b>{.col}</b> for original name and <b>{.fn}</b> for function name.<br>Leave empty to overwrite original variables.")
+
   tr_save <- rk.XML.saveobj(label="Save to (overwrite or new object)", initial="data_tr", chk=TRUE, id.name="save_tr")
   tr_preview <- rk.XML.preview(label="Preview data", id.name="preview_tr", mode="data")
   tr_preview_note <- rk.XML.text("<i>Note: Preview limited to the first selected variable and 50 rows.<br><b>Warning:</b> Aggregation functions (sum, mean) in preview will only reflect the 50 sampled rows, not the full dataset.</i>")
@@ -144,12 +145,10 @@ local({
       ', if(is_preview) '
       echo("preview_data <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
       ' else '
-      echo(save_name + " <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
+      echo("data_tr <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
       '
     )
   }
-
-  # FIX: Escaped quotes in save name
   js_print_tr <- '
     if(getValue("save_tr.active")) {
       var save_name = getValue("save_tr").replace(/"/g, "\\\\\\"");
@@ -247,12 +246,11 @@ local({
       ', if(is_preview) '
       echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       ' else '
-      echo(save_name + " <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       '
     )
   }
 
-  # FIX: Escaped quotes in save name
   js_print_rc <- '
     if(getValue("save_rc.active")) {
       var save_name = getValue("save_rc").replace(/"/g, "\\\\\\"");
@@ -313,10 +311,11 @@ local({
       ', if(is_preview) '
       echo("preview_data <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\\n");
       ' else '
+      // FIXED: Hardcoded "data_score" to match XML initial value
       if (append == "1") {
-          echo(save_name + " <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\\n");
+          echo("data_score <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\\n");
       } else {
-          echo(save_name + " <- " + input_df + " %>% dplyr::transmute(" + newname + " = " + calc_code + ")\\n");
+          echo("data_score <- " + input_df + " %>% dplyr::transmute(" + newname + " = " + calc_code + ")\\n");
       }
       '
     )
@@ -326,7 +325,7 @@ local({
   js_print_cp <- '
     if(getValue("save_cp.active")) {
       var save_name = getValue("save_cp").replace(/"/g, "\\\\\\"");
-      echo("rk.header(\\"Composite Score Created: " + getValue("name_cp") + "\\", level=3, toc=FALSE)\\n");
+      echo("rk.header(\\"Composite Score Created: " + save_name + "\\", level=3, toc=FALSE)\\n");
     }
   '
 
@@ -349,5 +348,5 @@ local({
     load = TRUE, overwrite = TRUE, show = FALSE
   )
 
-  cat("\nPlugin 'rk.data.wrangling' (v0.1.1) generated successfully.\n")
+  cat("\nPlugin 'rk.data.wrangling' (v0.1.2) generated successfully.\n")
 })

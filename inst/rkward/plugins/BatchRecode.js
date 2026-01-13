@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -52,12 +52,12 @@ function preview(){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-      
+
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); 
+          var lhs = String(olds[i]).trim();
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          
+
           if (in_type == "character") {
              if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
@@ -67,7 +67,7 @@ function preview(){
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") { 
+      if (else_mode == "copy") {
           if (in_type == out_type) {
              args.push(".default = .");
           } else {
@@ -109,7 +109,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -152,12 +152,12 @@ function calculate(is_preview){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-      
+
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); 
+          var lhs = String(olds[i]).trim();
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          
+
           if (in_type == "character") {
              if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
@@ -167,7 +167,7 @@ function calculate(is_preview){
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") { 
+      if (else_mode == "copy") {
           if (in_type == out_type) {
              args.push(".default = .");
           } else {
@@ -188,7 +188,7 @@ function calculate(is_preview){
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
       
-      echo(save_name + " <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 
@@ -200,9 +200,9 @@ function printout(is_preview){
 	if(!is_preview) {
 		new Header(i18n("Batch Recode results")).print();	
 	}
-    if(getValue("save_rc.active")) { 
+    if(getValue("save_rc.active")) {
       var save_name = getValue("save_rc").replace(/"/g, "\\\"");
-      echo("rk.header(\"Recoded Variables Created in: " + save_name + "\", level=3, toc=FALSE)\n"); 
+      echo("rk.header(\"Recoded Variables Created in: " + save_name + "\", level=3, toc=FALSE)\n");
     }
   
 	if(!is_preview) {

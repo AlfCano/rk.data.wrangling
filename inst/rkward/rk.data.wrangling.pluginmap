@@ -20,8 +20,8 @@
 		name="rk.data.wrangling"
 		shortinfo="A suite of plugins for modern data manipulation using 'dplyr'. Includes batch transformations, recoding multiple variables, and creating composite scores."
 		longinfo="A suite of plugins for modern data manipulation using 'dplyr'. Includes batch transformations, recoding multiple variables, and creating composite scores."
-		version="0.1.1"
-		releasedate="2026-01-07"
+		version="0.1.2"
+		releasedate="2026-01-12"
 		url="https://github.com/AlfCano/rk.data.wrangling"
 		license="GPL (&gt;= 3)"
 	>

@@ -3,8 +3,8 @@ Type: Package
 Title: A suite of plugins for modern data manipulation using 'dplyr'.
         Includes batch transformations, recoding multiple variables,
         and creating composite scores.
-Version: 0.1.1
-Date: 2026-01-07
+Version: 0.1.2
+Date: 2026-01-12
 Author: Alfonso Cano
 Maintainer: Alfonso Cano <alfonso.cano@correo.buap.mx>
 Enhances: rkward
