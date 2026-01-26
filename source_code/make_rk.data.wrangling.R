@@ -6,7 +6,7 @@ local({
   rkwarddev.required("0.08-1")
 
   plugin_name <- "rk.data.wrangling"
-  plugin_ver <- "0.1.2"
+  plugin_ver <- "0.1.3"
 
   package_about <- rk.XML.about(
     name = plugin_name,
@@ -89,6 +89,8 @@ local({
   tr_naming <- rk.XML.input(label = "Naming pattern (glue syntax)", initial = "{.col}_{.fn}", id.name = "names_tr")
   tr_help_label <- rk.XML.text("Use <b>{.col}</b> for original name and <b>{.fn}</b> for function name.<br>Leave empty to overwrite original variables.")
 
+  tr_append <- rk.XML.cbox(label = "Append to original dataset (mutate)", value = "1", chk = TRUE, id.name = "tr_append")
+
   tr_save <- rk.XML.saveobj(label="Save to (overwrite or new object)", initial="data_tr", chk=TRUE, id.name="save_tr")
   tr_preview <- rk.XML.preview(label="Preview data", id.name="preview_tr", mode="data")
   tr_preview_note <- rk.XML.text("<i>Note: Preview limited to the first selected variable and 50 rows.<br><b>Warning:</b> Aggregation functions (sum, mean) in preview will only reflect the 50 sampled rows, not the full dataset.</i>")
@@ -99,7 +101,7 @@ local({
           rk.XML.col(tr_vars, rk.XML.stretch(), rk.XML.frame(tr_group, label = "Grouped Calculation"))
       ),
       "Transformation" = rk.XML.col(tr_func_drop, tr_narm, tr_cust_input, rk.XML.stretch()),
-      "Output Options" = rk.XML.col(tr_naming, tr_help_label, rk.XML.stretch(), tr_preview, tr_preview_note, tr_save)
+      "Output Options" = rk.XML.col(tr_naming, tr_help_label, tr_append, rk.XML.stretch(), tr_preview, tr_preview_note, tr_save)
   )))
 
   js_gen_tr <- function(is_preview) {
@@ -121,6 +123,8 @@ local({
       var use_na_rm = getValue("tr_narm_cbox") == "1";
       var naming = getValue("names_tr");
       var groups = getCol("vars_group_tr");
+      var append = getValue("tr_append");
+      var dplyr_verb = (append == "1") ? "mutate" : "transmute";
 
       var group_start = "";
       var group_end = "";
@@ -140,21 +144,15 @@ local({
           }
       }
       var name_arg = (naming == "") ? "" : ", .names = \\"" + naming + "\\"";
-      var save_name = getValue("save_tr");
 
       ', if(is_preview) '
-      echo("preview_data <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
+      echo("preview_data <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
       ' else '
-      echo("data_tr <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
+      echo("data_tr <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
       '
     )
   }
-  js_print_tr <- '
-    if(getValue("save_tr.active")) {
-      var save_name = getValue("save_tr").replace(/"/g, "\\\\\\"");
-      echo("rk.header(\\"Batch Transform Created: " + save_name + "\\", level=3, toc=FALSE)\\n");
-    }
-  '
+  js_print_tr <- 'if(getValue("save_tr.active")) { echo("rk.header(\\"Batch Transform Created: " + getValue("save_tr") + "\\", level=3, toc=FALSE)\\n"); }'
 
   # =========================================================================================
   # 4. Component B: Batch Recode
@@ -240,7 +238,14 @@ local({
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \\"{.col}" + suffix + "\\"";
-      var func_call = "dplyr::case_match(., " + match_args + ")";
+
+      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
+      var input_wrapper = ".";
+      if (in_type == "character") {
+          input_wrapper = "as.character(.)";
+      }
+
+      var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
       ', if(is_preview) '
@@ -267,6 +272,7 @@ local({
   cp_na <- rk.XML.cbox(label = "Remove NAs (na.rm = TRUE)", value = "1", chk = TRUE, id.name = "na_cp")
   cp_newname <- rk.XML.input(label = "Name of new variable", initial = "new_score", required = TRUE, id.name = "name_cp")
   cp_append <- rk.XML.cbox(label = "Append to original dataset", value = "1", chk = TRUE, id.name = "append_cp")
+
   cp_save <- rk.XML.saveobj(label="Save result as", initial="data_score", chk=TRUE, id.name="save_cp")
   cp_preview <- rk.XML.preview(label="Preview data", id.name="preview_cp", mode="data")
   cp_preview_note <- rk.XML.text("<i>Note: Preview limited to 50 rows.</i>")
@@ -311,7 +317,6 @@ local({
       ', if(is_preview) '
       echo("preview_data <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\\n");
       ' else '
-      // FIXED: Hardcoded "data_score" to match XML initial value
       if (append == "1") {
           echo("data_score <- " + input_df + " %>% dplyr::mutate(" + newname + " = " + calc_code + ")\\n");
       } else {
@@ -321,7 +326,6 @@ local({
     )
   }
 
-  # FIX: Escaped quotes in save name
   js_print_cp <- '
     if(getValue("save_cp.active")) {
       var save_name = getValue("save_cp").replace(/"/g, "\\\\\\"");
@@ -348,5 +352,5 @@ local({
     load = TRUE, overwrite = TRUE, show = FALSE
   )
 
-  cat("\nPlugin 'rk.data.wrangling' (v0.1.2) generated successfully.\n")
+  cat("\nPlugin 'rk.data.wrangling' (v0.1.3) generated successfully.\n")
 })
