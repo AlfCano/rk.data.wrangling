@@ -60,7 +60,7 @@
 				</column>
 			</tab>
 			<tab label="Output Options" id="tab_OtptOptn">
-				<column id="clm_iNULULPNP5">
+				<column id="clm_iNULULA1PN">
 					<input label="Naming pattern (glue syntax)" id="names_tr" initial="{.col}_{.fn}" />
 					<text id="txt_UsbclbfL">
 						Use
@@ -76,6 +76,7 @@
 							Leave empty to overwrite original variables.
 						</br>
 					</text>
+					<checkbox id="tr_append" label="Append to original dataset (mutate)" value="1" checked="true" />
 					<stretch />
 					<preview label="Preview data" id="preview_tr" mode="data" />
 					<text id="txt_iNP50WA5">

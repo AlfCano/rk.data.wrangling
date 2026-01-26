@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -34,7 +34,7 @@ function preview(){
       var raw_vars = getValue("vars_tr");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
-
+      
       
       echo("require(dplyr)\n");
       vars = vars.slice(0, 1);
@@ -46,7 +46,9 @@ function preview(){
       var use_na_rm = getValue("tr_narm_cbox") == "1";
       var naming = getValue("names_tr");
       var groups = getCol("vars_group_tr");
-
+      var append = getValue("tr_append");
+      var dplyr_verb = (append == "1") ? "mutate" : "transmute";
+      
       var group_start = "";
       var group_end = "";
       if (groups.length > 0) {
@@ -65,10 +67,9 @@ function preview(){
           }
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
-      var save_name = getValue("save_tr");
-
       
-      echo("preview_data <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
+      
+      echo("preview_data <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
       
 }
 
@@ -85,7 +86,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -114,7 +115,7 @@ function calculate(is_preview){
       var raw_vars = getValue("vars_tr");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
-
+      
       
 
       var func = getValue("func_tr");
@@ -122,7 +123,9 @@ function calculate(is_preview){
       var use_na_rm = getValue("tr_narm_cbox") == "1";
       var naming = getValue("names_tr");
       var groups = getCol("vars_group_tr");
-
+      var append = getValue("tr_append");
+      var dplyr_verb = (append == "1") ? "mutate" : "transmute";
+      
       var group_start = "";
       var group_end = "";
       if (groups.length > 0) {
@@ -141,10 +144,9 @@ function calculate(is_preview){
           }
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
-      var save_name = getValue("save_tr");
-
       
-      echo("data_tr <- " + input_df + group_start + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
+      
+      echo("data_tr <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
       
 }
 
@@ -155,12 +157,7 @@ function printout(is_preview){
 	// printout the results
 	if(!is_preview) {
 		new Header(i18n("Batch Transform results")).print();	
-	}
-    if(getValue("save_tr.active")) {
-      var save_name = getValue("save_tr").replace(/"/g, "\\\"");
-      echo("rk.header(\"Batch Transform Created: " + save_name + "\", level=3, toc=FALSE)\n");
-    }
-  
+	}if(getValue("save_tr.active")) { echo("rk.header(\"Batch Transform Created: " + getValue("save_tr") + "\", level=3, toc=FALSE)\n"); }
 	if(!is_preview) {
 		//// save result object
 		// read in saveobject variables

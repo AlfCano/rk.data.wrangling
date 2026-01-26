@@ -1,11 +1,15 @@
 # rk.data.wrangling: Tidy Data Manipulation for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.2-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml)
 
 **rk.data.wrangling** brings modern, "tidy" data manipulation tools to the RKWard GUI. It provides a user-friendly interface for the powerful `dplyr` package, allowing users to perform complex batch operations—transformations, recoding, and scoring—on multiple variables simultaneously without writing complex code.
+
+## 🚀 What's New in Version 0.1.3
+
+*   **Recode Fix for Factors:** Resolved a strict type error in `dplyr::case_match` when recoding Factor variables. The plugin now automatically handles the necessary type conversions (to character) when defining text-based rules, preventing "loss of generality" errors during batch recoding.
 
 ## 🚀 What's New in Version 0.1.2
 

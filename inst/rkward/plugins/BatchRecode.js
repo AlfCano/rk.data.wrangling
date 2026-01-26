@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -52,12 +52,12 @@ function preview(){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-
+      
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim();
+          var lhs = String(olds[i]).trim(); 
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-
+          
           if (in_type == "character") {
              if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
@@ -67,7 +67,7 @@ function preview(){
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") {
+      if (else_mode == "copy") { 
           if (in_type == out_type) {
              args.push(".default = .");
           } else {
@@ -84,7 +84,14 @@ function preview(){
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \"{.col}" + suffix + "\"";
-      var func_call = "dplyr::case_match(., " + match_args + ")";
+      
+      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
+      var input_wrapper = ".";
+      if (in_type == "character") {
+          input_wrapper = "as.character(.)";
+      }
+      
+      var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
       
@@ -109,7 +116,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return [];
+        if (!raw) return []; 
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -152,12 +159,12 @@ function calculate(is_preview){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-
+      
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim();
+          var lhs = String(olds[i]).trim(); 
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-
+          
           if (in_type == "character") {
              if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
@@ -167,7 +174,7 @@ function calculate(is_preview){
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") {
+      if (else_mode == "copy") { 
           if (in_type == out_type) {
              args.push(".default = .");
           } else {
@@ -184,7 +191,14 @@ function calculate(is_preview){
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \"{.col}" + suffix + "\"";
-      var func_call = "dplyr::case_match(., " + match_args + ")";
+      
+      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
+      var input_wrapper = ".";
+      if (in_type == "character") {
+          input_wrapper = "as.character(.)";
+      }
+      
+      var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
       
