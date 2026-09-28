@@ -1,11 +1,15 @@
 # rk.data.wrangling: Tidy Data Manipulation for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.4-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.5-blue.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml)
 
 **rk.data.wrangling** brings modern, "tidy" data manipulation tools to the RKWard GUI. It provides a user-friendly interface for the powerful `dplyr` package, allowing users to perform complex batch operations—transformations, recoding, and scoring—on multiple variables simultaneously without writing complex code.
+
+## 🚀 What's New in Version 0.1.5
+
+*   **Attribute & Label Preservation:** Fixed an issue where recoding or coercing variables to factors destroyed their metadata. The generated R code now uses a safe wrapper that automatically preserves `label` and `.rk.meta` attributes, ensuring your dataset remains properly documented within the RKWard environment.
 
 ## 🚀 What's New in Version 0.1.4
 

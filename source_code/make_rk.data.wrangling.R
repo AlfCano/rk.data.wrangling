@@ -6,7 +6,7 @@ local({
   rkwarddev.required("0.08-1")
 
   plugin_name <- "rk.data.wrangling"
-  plugin_ver <- "0.1.4" # ¡Versión actualizada!
+  plugin_ver <- "0.1.5"
 
   package_about <- rk.XML.about(
     name = plugin_name,
@@ -259,14 +259,20 @@ local({
           input_wrapper = "as.character(.)";
       }
 
+      var input_wrapper = ".";
+      if (in_type == "character") {
+          input_wrapper = "as.character(.)";
+      }
+
       var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
-      // ¡AQUÍ ESTÁ LA CLAVE! Usando safe_vars.join(", ") en lugar de vars.join(", ")
+      var final_formula = "~ { .res <- " + func_call + "; attr(.res, \\\"label\\\") <- attr(., \\\"label\\\"); attr(.res, \\\".rk.meta\\\") <- attr(., \\\".rk.meta\\\"); .res }";
+
       ', if(is_preview) '
-      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
+      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), " + final_formula + name_arg + "))\\n");
       ' else '
-      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), " + final_formula + name_arg + "))\\n");
       '
     )
   }
