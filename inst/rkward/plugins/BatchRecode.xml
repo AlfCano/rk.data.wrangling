@@ -38,6 +38,20 @@
 						<option label="Character / Factor" value="character" />
 					</dropdown>
 					<matrix id="matrix_rules" label="Mapping Rules" mode="string" horiz_headers="Old Value;New Value" />
+					<text id="txt_bImTNANV">
+						<b>
+							Important note:
+						</b>
+						To set values as missing, type
+						<b>
+							NA
+						</b>
+						(uppercase, no quotes) in the
+						<i>
+							New Value
+						</i>
+						column.
+					</text>
 					<frame label="Default Behavior" id="frm_DfltBhvr">
 						<radio id="rad_else_mode" label="Unmatched values (Else)">
 							<option label="Copy original values (Default)" value="copy" checked="true" />

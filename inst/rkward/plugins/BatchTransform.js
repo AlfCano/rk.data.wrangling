@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -31,10 +31,11 @@ function preview(){
   
       var vars = getCol("vars_tr");
       if (vars.length === 0) return;
+      var safe_vars = vars.map(function(v) { return "\`" + v + "\`"; });
       var raw_vars = getValue("vars_tr");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
-      
+
       
       echo("require(dplyr)\n");
       vars = vars.slice(0, 1);
@@ -48,7 +49,7 @@ function preview(){
       var groups = getCol("vars_group_tr");
       var append = getValue("tr_append");
       var dplyr_verb = (append == "1") ? "mutate" : "transmute";
-      
+
       var group_start = "";
       var group_end = "";
       if (groups.length > 0) {
@@ -67,9 +68,9 @@ function preview(){
           }
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
+
       
-      
-      echo("preview_data <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
+      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 
@@ -86,7 +87,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -112,10 +113,11 @@ function calculate(is_preview){
   
       var vars = getCol("vars_tr");
       if (vars.length === 0) return;
+      var safe_vars = vars.map(function(v) { return "\`" + v + "\`"; });
       var raw_vars = getValue("vars_tr");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
-      
+
       
 
       var func = getValue("func_tr");
@@ -125,7 +127,7 @@ function calculate(is_preview){
       var groups = getCol("vars_group_tr");
       var append = getValue("tr_append");
       var dplyr_verb = (append == "1") ? "mutate" : "transmute";
-      
+
       var group_start = "";
       var group_end = "";
       if (groups.length > 0) {
@@ -144,9 +146,9 @@ function calculate(is_preview){
           }
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
+
       
-      
-      echo("data_tr <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 

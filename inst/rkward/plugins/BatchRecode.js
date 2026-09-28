@@ -5,7 +5,7 @@ function preview(){
 	
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -31,13 +31,17 @@ function preview(){
   
       var vars = getCol("vars_rc");
       if (vars.length === 0) return;
+
+      // Aplicar backticks a todas las variables para evitar errores con símbolos como $
+      var safe_vars = vars.map(function(v) { return "\`" + v + "\`"; });
+
       var raw_vars = getValue("vars_rc");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
 
       
       echo("require(dplyr)\n");
-      vars = vars.slice(0, 1);
+      safe_vars = safe_vars.slice(0, 1);
       input_df = df_name + " %>% head(50)";
       
 
@@ -52,50 +56,57 @@ function preview(){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-      
+
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); 
+          var lhs = String(olds[i]).trim();
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          
+
           if (in_type == "character") {
-             if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
+             var is_na_lhs = (lhs === "NA" || lhs === "NA_character_");
+             if (!is_na_lhs && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
+
           if (out_type == "character") {
-             if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\"";
+             if (rhs === "NA") rhs = "NA_character_";
+             var is_na_rhs = (rhs === "NA_character_" || rhs === "NA_real_" || rhs === "NA_integer_");
+             if (!is_na_rhs && !rhs.startsWith("\"") && !rhs.startsWith("\'")) {
+                 rhs = "\"" + rhs + "\"";
+             }
           }
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") { 
-          if (in_type == out_type) {
-             args.push(".default = .");
+      if (else_mode == "copy") {
+          if (out_type == "character") {
+             args.push(".default = as.character(.)");
           } else {
-             if (out_type == "character") args.push(".default = as.character(.)");
-             else args.push(".default = as.numeric(.)");
+             args.push(".default = .");
           }
       }
       else if (else_mode == "na") { args.push(".default = NA"); }
       else if (else_mode == "specific") {
           var def_val = else_custom;
-          if (out_type == "character" && def_val != "NA" && !def_val.startsWith("\"")) { def_val = "\"" + def_val + "\""; }
+          if (out_type == "character" && def_val != "NA" && def_val != "NA_character_" && !def_val.startsWith("\"")) {
+              def_val = "\"" + def_val + "\"";
+          }
           args.push(".default = " + def_val);
       }
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \"{.col}" + suffix + "\"";
-      
-      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
+
       var input_wrapper = ".";
       if (in_type == "character") {
           input_wrapper = "as.character(.)";
       }
-      
+
       var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
+      // ¡AQUÍ ESTÁ LA CLAVE! Usando safe_vars.join(", ") en lugar de vars.join(", ")
       
-      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 
@@ -116,7 +127,7 @@ function calculate(is_preview){
 
     function getCol(id) {
         var raw = getValue(id);
-        if (!raw) return []; 
+        if (!raw) return [];
         return raw.split("\n").filter(function(n){ return n != "" }).map(function(item) {
             if (item.indexOf("[[") > -1) {
                 var m = item.match(/\[\[\"(.*?)\"\]\]/);
@@ -142,6 +153,10 @@ function calculate(is_preview){
   
       var vars = getCol("vars_rc");
       if (vars.length === 0) return;
+
+      // Aplicar backticks a todas las variables para evitar errores con símbolos como $
+      var safe_vars = vars.map(function(v) { return "\`" + v + "\`"; });
+
       var raw_vars = getValue("vars_rc");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
@@ -159,50 +174,57 @@ function calculate(is_preview){
       var olds = getList("matrix_rules.0");
       var news = getList("matrix_rules.1");
       var args = [];
-      
+
       for (var i = 0; i < olds.length; i++) {
-          var lhs = String(olds[i]).trim(); 
+          var lhs = String(olds[i]).trim();
           var rhs = String(news[i]).trim();
           if (lhs === "" || rhs === "") continue;
-          
+
           if (in_type == "character") {
-             if (lhs != "NA" && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
+             var is_na_lhs = (lhs === "NA" || lhs === "NA_character_");
+             if (!is_na_lhs && !lhs.startsWith("\"") && !lhs.startsWith("\'")) lhs = "\"" + lhs + "\"";
           }
+
           if (out_type == "character") {
-             if (rhs != "NA" && !rhs.startsWith("\"") && !rhs.startsWith("\'")) rhs = "\"" + rhs + "\"";
+             if (rhs === "NA") rhs = "NA_character_";
+             var is_na_rhs = (rhs === "NA_character_" || rhs === "NA_real_" || rhs === "NA_integer_");
+             if (!is_na_rhs && !rhs.startsWith("\"") && !rhs.startsWith("\'")) {
+                 rhs = "\"" + rhs + "\"";
+             }
           }
           args.push(lhs + " ~ " + rhs);
       }
 
-      if (else_mode == "copy") { 
-          if (in_type == out_type) {
-             args.push(".default = .");
+      if (else_mode == "copy") {
+          if (out_type == "character") {
+             args.push(".default = as.character(.)");
           } else {
-             if (out_type == "character") args.push(".default = as.character(.)");
-             else args.push(".default = as.numeric(.)");
+             args.push(".default = .");
           }
       }
       else if (else_mode == "na") { args.push(".default = NA"); }
       else if (else_mode == "specific") {
           var def_val = else_custom;
-          if (out_type == "character" && def_val != "NA" && !def_val.startsWith("\"")) { def_val = "\"" + def_val + "\""; }
+          if (out_type == "character" && def_val != "NA" && def_val != "NA_character_" && !def_val.startsWith("\"")) {
+              def_val = "\"" + def_val + "\"";
+          }
           args.push(".default = " + def_val);
       }
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \"{.col}" + suffix + "\"";
-      
-      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
+
       var input_wrapper = ".";
       if (in_type == "character") {
           input_wrapper = "as.character(.)";
       }
-      
+
       var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
+      // ¡AQUÍ ESTÁ LA CLAVE! Usando safe_vars.join(", ") en lugar de vars.join(", ")
       
-      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
       
 }
 

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: rk.data.wrangling 0.1.0\n"
+"Project-Id-Version: rk.data.wrangling 0.1.4\n"
 "Report-Msgid-Bugs-To: https://mail.kde.org/mailman/listinfo/kde-i18n-doc\n"
 "POT-Creation-Date: 2026-01-05 12:00+0000\n"
 "PO-Revision-Date: 2026-01-05 12:00+0000\n"
@@ -225,3 +225,6 @@ msgstr "Puntuación Compuesta Creada: "
 
 msgid "Calculate row-wise scores (Mean/Sum) from multiple variables."
 msgstr "Calcular puntuaciones por fila (Media/Suma) de múltiples variables."
+
+msgid "<b>Important note:</b> To set values as missing, type <b>NA</b> (uppercase, no quotes) in the <i>New Value</i> column."
+msgstr "<b>Nota importante:</b> Para convertir valores a perdidos, escribe <b>NA</b> (en mayúsculas y sin comillas) en la columna <i>New Value</i>."

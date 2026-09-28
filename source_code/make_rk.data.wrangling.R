@@ -6,7 +6,7 @@ local({
   rkwarddev.required("0.08-1")
 
   plugin_name <- "rk.data.wrangling"
-  plugin_ver <- "0.1.3"
+  plugin_ver <- "0.1.4" # ¡Versión actualizada!
 
   package_about <- rk.XML.about(
     name = plugin_name,
@@ -108,6 +108,7 @@ local({
     paste0(js_common_helper, '
       var vars = getCol("vars_tr");
       if (vars.length === 0) return;
+      var safe_vars = vars.map(function(v) { return "\\`" + v + "\\`"; });
       var raw_vars = getValue("vars_tr");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
@@ -146,16 +147,16 @@ local({
       var name_arg = (naming == "") ? "" : ", .names = \\"" + naming + "\\"";
 
       ', if(is_preview) '
-      echo("preview_data <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
+      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       ' else '
-      echo("data_tr <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       '
     )
   }
   js_print_tr <- 'if(getValue("save_tr.active")) { echo("rk.header(\\"Batch Transform Created: " + getValue("save_tr") + "\\", level=3, toc=FALSE)\\n"); }'
 
   # =========================================================================================
-  # 4. Component B: Batch Recode
+  # 4. Component B: Batch Recode (v0.1.4 con Parche de NA y Factor)
   # =========================================================================================
   rc_selector <- rk.XML.varselector(id.name = "sel_rc")
   rc_vars <- rk.XML.varslot(label = "Variables to recode", source = "sel_rc", multi = TRUE, required = TRUE, id.name = "vars_rc")
@@ -175,23 +176,30 @@ local({
   rc_preview <- rk.XML.preview(label="Preview data", id.name="preview_rc", mode="data")
   rc_preview_note <- rk.XML.text("<i>Note: Preview limited to the first selected variable and 50 rows.</i>")
 
+  rc_note_na <- rk.XML.text("<b>Important note:</b> To set values as missing, type <b>NA</b> (uppercase, no quotes) in the <i>New Value</i> column.")
+
   rc_dialog <- rk.XML.dialog(label = "Batch Recode Variables", child = rk.XML.tabbook(tabs = list(
       "Variable Selection" = rk.XML.row(rk.XML.col(rc_selector), rk.XML.col(rc_vars, rk.XML.stretch())),
-      "Recode Rules" = rk.XML.col(rc_in_type, rc_matrix, rk.XML.frame(rc_else_radio, rc_else_custom, label="Default Behavior")),
+      "Recode Rules" = rk.XML.col(rc_in_type, rc_matrix, rc_note_na, rk.XML.frame(rc_else_radio, rc_else_custom, label="Default Behavior")),
       "Output Options" = rk.XML.col(rc_out_type, rc_suffix, rc_as_factor, rk.XML.stretch(), rc_preview, rc_preview_note, rc_save)
   )))
 
+  # --- REEMPLAZA TODA ESTA FUNCIÓN ---
   js_gen_rc <- function(is_preview) {
     paste0(js_common_helper, '
       var vars = getCol("vars_rc");
       if (vars.length === 0) return;
+
+      // Aplicar backticks a todas las variables para evitar errores con símbolos como $
+      var safe_vars = vars.map(function(v) { return "\\`" + v + "\\`"; });
+
       var raw_vars = getValue("vars_rc");
       var df_name = getDfName(raw_vars);
       var input_df = df_name;
 
       ', if(is_preview) '
       echo("require(dplyr)\\n");
-      vars = vars.slice(0, 1);
+      safe_vars = safe_vars.slice(0, 1);
       input_df = df_name + " %>% head(50)";
       ', '
 
@@ -213,33 +221,39 @@ local({
           if (lhs === "" || rhs === "") continue;
 
           if (in_type == "character") {
-             if (lhs != "NA" && !lhs.startsWith("\\"") && !lhs.startsWith("\\\'")) lhs = "\\"" + lhs + "\\"";
+             var is_na_lhs = (lhs === "NA" || lhs === "NA_character_");
+             if (!is_na_lhs && !lhs.startsWith("\\"") && !lhs.startsWith("\\\'")) lhs = "\\"" + lhs + "\\"";
           }
+
           if (out_type == "character") {
-             if (rhs != "NA" && !rhs.startsWith("\\"") && !rhs.startsWith("\\\'")) rhs = "\\"" + rhs + "\\"";
+             if (rhs === "NA") rhs = "NA_character_";
+             var is_na_rhs = (rhs === "NA_character_" || rhs === "NA_real_" || rhs === "NA_integer_");
+             if (!is_na_rhs && !rhs.startsWith("\\"") && !rhs.startsWith("\\\'")) {
+                 rhs = "\\"" + rhs + "\\"";
+             }
           }
           args.push(lhs + " ~ " + rhs);
       }
 
       if (else_mode == "copy") {
-          if (in_type == out_type) {
-             args.push(".default = .");
+          if (out_type == "character") {
+             args.push(".default = as.character(.)");
           } else {
-             if (out_type == "character") args.push(".default = as.character(.)");
-             else args.push(".default = as.numeric(.)");
+             args.push(".default = .");
           }
       }
       else if (else_mode == "na") { args.push(".default = NA"); }
       else if (else_mode == "specific") {
           var def_val = else_custom;
-          if (out_type == "character" && def_val != "NA" && !def_val.startsWith("\\"")) { def_val = "\\"" + def_val + "\\""; }
+          if (out_type == "character" && def_val != "NA" && def_val != "NA_character_" && !def_val.startsWith("\\"")) {
+              def_val = "\\"" + def_val + "\\"";
+          }
           args.push(".default = " + def_val);
       }
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \\"{.col}" + suffix + "\\"";
 
-      // FIX: Check for Input Type. If Character, wrap input in as.character(.)
       var input_wrapper = ".";
       if (in_type == "character") {
           input_wrapper = "as.character(.)";
@@ -248,10 +262,11 @@ local({
       var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
+      // ¡AQUÍ ESTÁ LA CLAVE! Usando safe_vars.join(", ") en lugar de vars.join(", ")
       ', if(is_preview) '
-      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
+      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       ' else '
-      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
+      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\\n");
       '
     )
   }
@@ -352,5 +367,5 @@ local({
     load = TRUE, overwrite = TRUE, show = FALSE
   )
 
-  cat("\nPlugin 'rk.data.wrangling' (v0.1.3) generated successfully.\n")
+  cat(sprintf("\nPlugin '%s' (v%s) generated successfully.\n", plugin_name, plugin_ver))
 })

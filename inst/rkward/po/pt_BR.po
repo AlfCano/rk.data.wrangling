@@ -225,3 +225,6 @@ msgstr "Pontuação Composta Criada: "
 
 msgid "Calculate row-wise scores (Mean/Sum) from multiple variables."
 msgstr "Calcular pontuações por linha (Média/Soma) de múltiplas variáveis."
+
+msgid "<b>Important note:</b> To set values as missing, type <b>NA</b> (uppercase, no quotes) in the <i>New Value</i> column."
+msgstr "<b>Nota importante:</b> Para definir valores como ausentes, digite <b>NA</b> (em maiúsculas, sem aspas) na coluna <i>New Value</i>."

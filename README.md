@@ -1,11 +1,17 @@
 # rk.data.wrangling: Tidy Data Manipulation for RKWard
 
-![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.4-blue.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![RKWard](https://img.shields.io/badge/Platform-RKWard-green)
 [![R Linter](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml/badge.svg)](https://github.com/AlfCano/rk.data.wrangling/actions/workflows/lintr.yml)
 
 **rk.data.wrangling** brings modern, "tidy" data manipulation tools to the RKWard GUI. It provides a user-friendly interface for the powerful `dplyr` package, allowing users to perform complex batch operations—transformations, recoding, and scoring—on multiple variables simultaneously without writing complex code.
+
+## 🚀 What's New in Version 0.1.4
+
+*   **Extreme Variable Name Safety:** Fixed a critical bug where variables containing reserved R symbols (like `$`, e.g., `filter_$`) would break the generated script. All variable names are now safely wrapped in backticks (`` ` ``) during code generation.
+*   **Smart `NA` Handling in Recode:** The plugin now automatically detects `NA` text inputs and intelligently translates them to `NA_character_` when the output type is Character/Factor, preventing strict type-matching errors in `dplyr::case_match`.
+*   **UI Enhancements:** Added explicit on-screen instructions in the Batch Recode dialog for setting missing values (fully translatable across all supported languages).
 
 ## 🚀 What's New in Version 0.1.3
 
