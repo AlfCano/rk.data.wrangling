@@ -38,7 +38,8 @@ function preview(){
 
       
       echo("require(dplyr)\n");
-      vars = vars.slice(0, 1);
+      // Mantenemos solo la primera variable para el preview
+      safe_vars = safe_vars.slice(0, 1);
       input_df = df_name + " %>% head(50)";
       
 
@@ -69,8 +70,9 @@ function preview(){
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
 
+      // AQUÍ ESTÁ LA CORRECCIÓN: Usamos fn_call, dplyr_verb, group_start y group_end
       
-      echo("preview_data <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo("preview_data <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + safe_vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
       
 }
 
@@ -147,8 +149,9 @@ function calculate(is_preview){
       }
       var name_arg = (naming == "") ? "" : ", .names = \"" + naming + "\"";
 
+      // AQUÍ ESTÁ LA CORRECCIÓN: Usamos fn_call, dplyr_verb, group_start y group_end
       
-      echo("data_rec <- " + input_df + " %>% dplyr::mutate(dplyr::across(c(" + safe_vars.join(", ") + "), ~ " + func_call + name_arg + "))\n");
+      echo("data_tr <- " + input_df + group_start + " %>% dplyr::" + dplyr_verb + "(dplyr::across(c(" + safe_vars.join(", ") + "), " + fn_call + name_arg + "))" + group_end + "\n");
       
 }
 

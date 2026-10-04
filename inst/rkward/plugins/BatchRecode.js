@@ -101,11 +101,6 @@ function preview(){
           input_wrapper = "as.character(.)";
       }
 
-      var input_wrapper = ".";
-      if (in_type == "character") {
-          input_wrapper = "as.character(.)";
-      }
-
       var func_call = "dplyr::case_match(" + input_wrapper + ", " + match_args + ")";
       if (as_fac == "1") { func_call = "as.factor(" + func_call + ")"; }
 
@@ -219,11 +214,6 @@ function calculate(is_preview){
 
       var match_args = args.join(", ");
       var name_arg = (suffix == "") ? "" : ", .names = \"{.col}" + suffix + "\"";
-
-      var input_wrapper = ".";
-      if (in_type == "character") {
-          input_wrapper = "as.character(.)";
-      }
 
       var input_wrapper = ".";
       if (in_type == "character") {
